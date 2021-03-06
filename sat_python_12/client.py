@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import time, socket, threading
+import time, socket, threading, colorama, random
+from colorama import Fore
+colorama.init()
 
 def receving(name, sock, switch):
 	while not switch:
@@ -21,7 +23,7 @@ join = False
 host = socket.gethostbyname(socket.gethostname())
 port = 0
 
-server = ("192.168.31.22", 11719)
+server = ("192.168.31.234", 11719)
 
 # подключаемся к серверу
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -29,9 +31,27 @@ s.bind((host,port))
 s.setblocking(0)
 
 name = input("$ name: ")
+colors = [Fore.GREEN, Fore.RED, Fore.CYAN, Fore.YELLOW, Fore.MAGENTA]
+name = list(name)
+name = [random.choice(colors)+char for char in name]
+name = ''.join(name)
 
 # отправляет сообщения 
-s.sendto(("["+name+"] => join chat ").encode("utf-8"), server)
+s.sendto(("["+Fore.CYAN+name+Fore.RESET+"] => join chat ").encode("utf-8"), server)
 time.sleep(0.2)
 
+rT = threading.Thread(target = receving, args = ("RecvThread", s, shutdown))
+rT.start()
 
+while shutdown == False:
+	try:
+		message = input("["+name+"] > ")
+		if message != "":
+			s.sendto(("["+Fore.CYAN+name+Fore.RESET+"] > "+Fore.YELLOW+message+Fore.RESET).encode("utf-8"), server)
+		time.sleep(0.2)
+	except:
+		s.sendto(("["+Fore.CYAN+name+Fore.RESET+"] <= left chat ").encode("utf-8"), server)
+		shutdown = True
+
+rT.join()		
+s.close()
