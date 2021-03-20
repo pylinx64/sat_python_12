@@ -23,7 +23,7 @@ join = False
 host = socket.gethostbyname(socket.gethostname())
 port = 0
 
-server = ("192.168.31.234", 11719)
+server = ("192.168.31.20", 11719)
 
 # подключаемся к серверу
 s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -47,7 +47,7 @@ while shutdown == False:
 	try:
 		message = input("["+name+"] > ")
 		if message != "":
-			s.sendto(("["+Fore.CYAN+name+Fore.RESET+"] > "+Fore.YELLOW+message+Fore.RESET).encode("utf-8"), server)
+			s.sendto(("["+name+"] > "+Fore.YELLOW+message+Fore.RESET).encode("utf-8"), server)
 		time.sleep(0.2)
 	except:
 		s.sendto(("["+Fore.CYAN+name+Fore.RESET+"] <= left chat ").encode("utf-8"), server)
